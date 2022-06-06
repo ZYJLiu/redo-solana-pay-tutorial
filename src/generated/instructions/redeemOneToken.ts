@@ -11,89 +11,95 @@ import * as web3 from '@solana/web3.js'
 
 /**
  * @category Instructions
- * @category PartialPayment
+ * @category RedeemOneToken
  * @category generated
  */
-export type PartialPaymentInstructionArgs = {
-  tokenAmount: beet.bignum
-  usdcAmount: beet.bignum
+export type RedeemOneTokenInstructionArgs = {
+  amount: beet.bignum
 }
 /**
  * @category Instructions
- * @category PartialPayment
+ * @category RedeemOneToken
  * @category generated
  */
-export const partialPaymentStruct = new beet.BeetArgsStruct<
-  PartialPaymentInstructionArgs & {
+export const redeemOneTokenStruct = new beet.BeetArgsStruct<
+  RedeemOneTokenInstructionArgs & {
     instructionDiscriminator: number[] /* size: 8 */
   }
 >(
   [
     ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['tokenAmount', beet.u64],
-    ['usdcAmount', beet.u64],
+    ['amount', beet.u64],
   ],
-  'PartialPaymentInstructionArgs'
+  'RedeemOneTokenInstructionArgs'
 )
 /**
- * Accounts required by the _partialPayment_ instruction
+ * Accounts required by the _redeemOneToken_ instruction
  *
- * @property [_writable_] mintPda
+ * @property [] tokenData
+ * @property [_writable_] tokenMint
  * @property [_writable_] userToken
- * @property [_writable_] userUsdcToken
  * @property [**signer**] user
- * @property [_writable_] programUsdcToken
- * @property [] usdcMint
- * @property [_writable_] merchantUsdcToken
+ * @property [_writable_] reserveUsdcAccount
+ * @property [_writable_] earnedUsdcAccount
+ * @property [_writable_] treasuryAccount
+ * @property [] mint
  * @category Instructions
- * @category PartialPayment
+ * @category RedeemOneToken
  * @category generated
  */
-export type PartialPaymentInstructionAccounts = {
-  mintPda: web3.PublicKey
+export type RedeemOneTokenInstructionAccounts = {
+  tokenData: web3.PublicKey
+  tokenMint: web3.PublicKey
   userToken: web3.PublicKey
-  userUsdcToken: web3.PublicKey
   user: web3.PublicKey
-  programUsdcToken: web3.PublicKey
-  usdcMint: web3.PublicKey
-  merchantUsdcToken: web3.PublicKey
+  reserveUsdcAccount: web3.PublicKey
+  earnedUsdcAccount: web3.PublicKey
+  treasuryAccount: web3.PublicKey
+  mint: web3.PublicKey
 }
 
-export const partialPaymentInstructionDiscriminator = [
-  17, 192, 37, 162, 156, 252, 20, 86,
+export const redeemOneTokenInstructionDiscriminator = [
+  87, 95, 28, 103, 251, 163, 62, 161,
 ]
 
 /**
- * Creates a _PartialPayment_ instruction.
+ * Creates a _RedeemOneToken_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @param args to provide as instruction data to the program
  *
  * @category Instructions
- * @category PartialPayment
+ * @category RedeemOneToken
  * @category generated
  */
-export function createPartialPaymentInstruction(
-  accounts: PartialPaymentInstructionAccounts,
-  args: PartialPaymentInstructionArgs
+export function createRedeemOneTokenInstruction(
+  accounts: RedeemOneTokenInstructionAccounts,
+  args: RedeemOneTokenInstructionArgs
 ) {
   const {
-    mintPda,
+    tokenData,
+    tokenMint,
     userToken,
-    userUsdcToken,
     user,
-    programUsdcToken,
-    usdcMint,
-    merchantUsdcToken,
+    reserveUsdcAccount,
+    earnedUsdcAccount,
+    treasuryAccount,
+    mint,
   } = accounts
 
-  const [data] = partialPaymentStruct.serialize({
-    instructionDiscriminator: partialPaymentInstructionDiscriminator,
+  const [data] = redeemOneTokenStruct.serialize({
+    instructionDiscriminator: redeemOneTokenInstructionDiscriminator,
     ...args,
   })
   const keys: web3.AccountMeta[] = [
     {
-      pubkey: mintPda,
+      pubkey: tokenData,
+      isWritable: false,
+      isSigner: false,
+    },
+    {
+      pubkey: tokenMint,
       isWritable: true,
       isSigner: false,
     },
@@ -103,28 +109,28 @@ export function createPartialPaymentInstruction(
       isSigner: false,
     },
     {
-      pubkey: userUsdcToken,
-      isWritable: true,
-      isSigner: false,
-    },
-    {
       pubkey: user,
       isWritable: false,
       isSigner: true,
     },
     {
-      pubkey: programUsdcToken,
+      pubkey: reserveUsdcAccount,
       isWritable: true,
       isSigner: false,
     },
     {
-      pubkey: usdcMint,
+      pubkey: earnedUsdcAccount,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: treasuryAccount,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: mint,
       isWritable: false,
-      isSigner: false,
-    },
-    {
-      pubkey: merchantUsdcToken,
-      isWritable: true,
       isSigner: false,
     },
     {
@@ -136,7 +142,7 @@ export function createPartialPaymentInstruction(
 
   const ix = new web3.TransactionInstruction({
     programId: new web3.PublicKey(
-      '53pUyMnFNBEbpncA5sKZHjmf2bexs2Rk7s7d8no4vVd8'
+      'G28ceN5471mPMKhSThZu4tvzK6Skbxrr8qy4abskVsYJ'
     ),
     keys,
     data,

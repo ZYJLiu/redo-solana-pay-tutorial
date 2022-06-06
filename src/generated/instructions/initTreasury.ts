@@ -11,54 +11,54 @@ import * as web3 from '@solana/web3.js'
 
 /**
  * @category Instructions
- * @category CreateTokenAccount
+ * @category InitTreasury
  * @category generated
  */
-export const createTokenAccountStruct = new beet.BeetArgsStruct<{
+export const initTreasuryStruct = new beet.BeetArgsStruct<{
   instructionDiscriminator: number[] /* size: 8 */
 }>(
   [['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)]],
-  'CreateTokenAccountInstructionArgs'
+  'InitTreasuryInstructionArgs'
 )
 /**
- * Accounts required by the _createTokenAccount_ instruction
+ * Accounts required by the _initTreasury_ instruction
  *
- * @property [_writable_] tokenAccount
+ * @property [_writable_] treasuryUsdcAccount
  * @property [] mint
- * @property [_writable_, **signer**] payer
+ * @property [_writable_, **signer**] user
  * @category Instructions
- * @category CreateTokenAccount
+ * @category InitTreasury
  * @category generated
  */
-export type CreateTokenAccountInstructionAccounts = {
-  tokenAccount: web3.PublicKey
+export type InitTreasuryInstructionAccounts = {
+  treasuryUsdcAccount: web3.PublicKey
   mint: web3.PublicKey
-  payer: web3.PublicKey
+  user: web3.PublicKey
 }
 
-export const createTokenAccountInstructionDiscriminator = [
-  147, 241, 123, 100, 244, 132, 174, 118,
+export const initTreasuryInstructionDiscriminator = [
+  105, 152, 173, 51, 158, 151, 49, 14,
 ]
 
 /**
- * Creates a _CreateTokenAccount_ instruction.
+ * Creates a _InitTreasury_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @category Instructions
- * @category CreateTokenAccount
+ * @category InitTreasury
  * @category generated
  */
-export function createCreateTokenAccountInstruction(
-  accounts: CreateTokenAccountInstructionAccounts
+export function createInitTreasuryInstruction(
+  accounts: InitTreasuryInstructionAccounts
 ) {
-  const { tokenAccount, mint, payer } = accounts
+  const { treasuryUsdcAccount, mint, user } = accounts
 
-  const [data] = createTokenAccountStruct.serialize({
-    instructionDiscriminator: createTokenAccountInstructionDiscriminator,
+  const [data] = initTreasuryStruct.serialize({
+    instructionDiscriminator: initTreasuryInstructionDiscriminator,
   })
   const keys: web3.AccountMeta[] = [
     {
-      pubkey: tokenAccount,
+      pubkey: treasuryUsdcAccount,
       isWritable: true,
       isSigner: false,
     },
@@ -68,7 +68,7 @@ export function createCreateTokenAccountInstruction(
       isSigner: false,
     },
     {
-      pubkey: payer,
+      pubkey: user,
       isWritable: true,
       isSigner: true,
     },
@@ -78,12 +78,12 @@ export function createCreateTokenAccountInstruction(
       isSigner: false,
     },
     {
-      pubkey: splToken.TOKEN_PROGRAM_ID,
+      pubkey: web3.SYSVAR_RENT_PUBKEY,
       isWritable: false,
       isSigner: false,
     },
     {
-      pubkey: web3.SYSVAR_RENT_PUBKEY,
+      pubkey: splToken.TOKEN_PROGRAM_ID,
       isWritable: false,
       isSigner: false,
     },
@@ -91,7 +91,7 @@ export function createCreateTokenAccountInstruction(
 
   const ix = new web3.TransactionInstruction({
     programId: new web3.PublicKey(
-      '53pUyMnFNBEbpncA5sKZHjmf2bexs2Rk7s7d8no4vVd8'
+      'G28ceN5471mPMKhSThZu4tvzK6Skbxrr8qy4abskVsYJ'
     ),
     keys,
     data,

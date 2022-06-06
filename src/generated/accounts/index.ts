@@ -1,1 +1,1 @@
-export * from './Merchant'
+export * from './TokenData'

@@ -11,19 +11,19 @@ import * as web3 from '@solana/web3.js'
 
 /**
  * @category Instructions
- * @category Burn
+ * @category RedeemUsdc
  * @category generated
  */
-export type BurnInstructionArgs = {
+export type RedeemUsdcInstructionArgs = {
   amount: beet.bignum
 }
 /**
  * @category Instructions
- * @category Burn
+ * @category RedeemUsdc
  * @category generated
  */
-export const burnStruct = new beet.BeetArgsStruct<
-  BurnInstructionArgs & {
+export const redeemUsdcStruct = new beet.BeetArgsStruct<
+  RedeemUsdcInstructionArgs & {
     instructionDiscriminator: number[] /* size: 8 */
   }
 >(
@@ -31,62 +31,78 @@ export const burnStruct = new beet.BeetArgsStruct<
     ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
     ['amount', beet.u64],
   ],
-  'BurnInstructionArgs'
+  'RedeemUsdcInstructionArgs'
 )
 /**
- * Accounts required by the _burn_ instruction
+ * Accounts required by the _redeemUsdc_ instruction
  *
- * @property [_writable_] mintPda
+ * @property [] tokenData
+ * @property [_writable_] tokenMint
  * @property [_writable_] userToken
+ * @property [_writable_] userUsdcToken
  * @property [**signer**] user
- * @property [_writable_] programUsdcToken
- * @property [] usdcMint
- * @property [_writable_] merchantUsdcToken
+ * @property [_writable_] reserveUsdcAccount
+ * @property [_writable_] earnedUsdcAccount
+ * @property [_writable_] treasuryAccount
+ * @property [] mint
  * @category Instructions
- * @category Burn
+ * @category RedeemUsdc
  * @category generated
  */
-export type BurnInstructionAccounts = {
-  mintPda: web3.PublicKey
+export type RedeemUsdcInstructionAccounts = {
+  tokenData: web3.PublicKey
+  tokenMint: web3.PublicKey
   userToken: web3.PublicKey
+  userUsdcToken: web3.PublicKey
   user: web3.PublicKey
-  programUsdcToken: web3.PublicKey
-  usdcMint: web3.PublicKey
-  merchantUsdcToken: web3.PublicKey
+  reserveUsdcAccount: web3.PublicKey
+  earnedUsdcAccount: web3.PublicKey
+  treasuryAccount: web3.PublicKey
+  mint: web3.PublicKey
 }
 
-export const burnInstructionDiscriminator = [116, 110, 29, 56, 107, 219, 42, 93]
+export const redeemUsdcInstructionDiscriminator = [
+  101, 142, 246, 184, 198, 56, 92, 174,
+]
 
 /**
- * Creates a _Burn_ instruction.
+ * Creates a _RedeemUsdc_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @param args to provide as instruction data to the program
  *
  * @category Instructions
- * @category Burn
+ * @category RedeemUsdc
  * @category generated
  */
-export function createBurnInstruction(
-  accounts: BurnInstructionAccounts,
-  args: BurnInstructionArgs
+export function createRedeemUsdcInstruction(
+  accounts: RedeemUsdcInstructionAccounts,
+  args: RedeemUsdcInstructionArgs
 ) {
   const {
-    mintPda,
+    tokenData,
+    tokenMint,
     userToken,
+    userUsdcToken,
     user,
-    programUsdcToken,
-    usdcMint,
-    merchantUsdcToken,
+    reserveUsdcAccount,
+    earnedUsdcAccount,
+    treasuryAccount,
+    mint,
   } = accounts
 
-  const [data] = burnStruct.serialize({
-    instructionDiscriminator: burnInstructionDiscriminator,
+  const [data] = redeemUsdcStruct.serialize({
+    instructionDiscriminator: redeemUsdcInstructionDiscriminator,
     ...args,
   })
   const keys: web3.AccountMeta[] = [
     {
-      pubkey: mintPda,
+      pubkey: tokenData,
+      isWritable: false,
+      isSigner: false,
+    },
+    {
+      pubkey: tokenMint,
       isWritable: true,
       isSigner: false,
     },
@@ -96,23 +112,33 @@ export function createBurnInstruction(
       isSigner: false,
     },
     {
+      pubkey: userUsdcToken,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
       pubkey: user,
       isWritable: false,
       isSigner: true,
     },
     {
-      pubkey: programUsdcToken,
+      pubkey: reserveUsdcAccount,
       isWritable: true,
       isSigner: false,
     },
     {
-      pubkey: usdcMint,
+      pubkey: earnedUsdcAccount,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: treasuryAccount,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: mint,
       isWritable: false,
-      isSigner: false,
-    },
-    {
-      pubkey: merchantUsdcToken,
-      isWritable: true,
       isSigner: false,
     },
     {
@@ -124,7 +150,7 @@ export function createBurnInstruction(
 
   const ix = new web3.TransactionInstruction({
     programId: new web3.PublicKey(
-      '53pUyMnFNBEbpncA5sKZHjmf2bexs2Rk7s7d8no4vVd8'
+      'G28ceN5471mPMKhSThZu4tvzK6Skbxrr8qy4abskVsYJ'
     ),
     keys,
     data,

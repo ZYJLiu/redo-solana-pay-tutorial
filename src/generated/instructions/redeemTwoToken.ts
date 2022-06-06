@@ -11,89 +11,100 @@ import * as web3 from '@solana/web3.js'
 
 /**
  * @category Instructions
- * @category MintTo
+ * @category RedeemTwoToken
  * @category generated
  */
-export type MintToInstructionArgs = {
-  amount: beet.bignum
+export type RedeemTwoTokenInstructionArgs = {
+  tokenAmount: beet.bignum
+  usdcAmount: beet.bignum
 }
 /**
  * @category Instructions
- * @category MintTo
+ * @category RedeemTwoToken
  * @category generated
  */
-export const mintToStruct = new beet.BeetArgsStruct<
-  MintToInstructionArgs & {
+export const redeemTwoTokenStruct = new beet.BeetArgsStruct<
+  RedeemTwoTokenInstructionArgs & {
     instructionDiscriminator: number[] /* size: 8 */
   }
 >(
   [
     ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['amount', beet.u64],
+    ['tokenAmount', beet.u64],
+    ['usdcAmount', beet.u64],
   ],
-  'MintToInstructionArgs'
+  'RedeemTwoTokenInstructionArgs'
 )
 /**
- * Accounts required by the _mintTo_ instruction
+ * Accounts required by the _redeemTwoToken_ instruction
  *
- * @property [] merchant
- * @property [_writable_] mintPda
+ * @property [] tokenData
+ * @property [_writable_] tokenMint
  * @property [_writable_] userToken
  * @property [_writable_] userUsdcToken
  * @property [**signer**] user
- * @property [_writable_] programUsdcToken
+ * @property [_writable_] reserveUsdcAccount
+ * @property [_writable_] earnedUsdcAccount
+ * @property [_writable_] treasuryAccount
+ * @property [] mint
  * @category Instructions
- * @category MintTo
+ * @category RedeemTwoToken
  * @category generated
  */
-export type MintToInstructionAccounts = {
-  merchant: web3.PublicKey
-  mintPda: web3.PublicKey
+export type RedeemTwoTokenInstructionAccounts = {
+  tokenData: web3.PublicKey
+  tokenMint: web3.PublicKey
   userToken: web3.PublicKey
   userUsdcToken: web3.PublicKey
   user: web3.PublicKey
-  programUsdcToken: web3.PublicKey
+  reserveUsdcAccount: web3.PublicKey
+  earnedUsdcAccount: web3.PublicKey
+  treasuryAccount: web3.PublicKey
+  mint: web3.PublicKey
 }
 
-export const mintToInstructionDiscriminator = [
-  241, 34, 48, 186, 37, 179, 123, 192,
+export const redeemTwoTokenInstructionDiscriminator = [
+  244, 238, 228, 75, 166, 207, 80, 109,
 ]
 
 /**
- * Creates a _MintTo_ instruction.
+ * Creates a _RedeemTwoToken_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @param args to provide as instruction data to the program
  *
  * @category Instructions
- * @category MintTo
+ * @category RedeemTwoToken
  * @category generated
  */
-export function createMintToInstruction(
-  accounts: MintToInstructionAccounts,
-  args: MintToInstructionArgs
+export function createRedeemTwoTokenInstruction(
+  accounts: RedeemTwoTokenInstructionAccounts,
+  args: RedeemTwoTokenInstructionArgs
 ) {
   const {
-    merchant,
-    mintPda,
+    tokenData,
+    tokenMint,
     userToken,
     userUsdcToken,
     user,
-    programUsdcToken,
+    reserveUsdcAccount,
+    earnedUsdcAccount,
+    treasuryAccount,
+    mint,
   } = accounts
 
-  const [data] = mintToStruct.serialize({
-    instructionDiscriminator: mintToInstructionDiscriminator,
+  const [data] = redeemTwoTokenStruct.serialize({
+    instructionDiscriminator: redeemTwoTokenInstructionDiscriminator,
     ...args,
   })
   const keys: web3.AccountMeta[] = [
     {
-      pubkey: merchant,
+      pubkey: tokenData,
       isWritable: false,
       isSigner: false,
     },
     {
-      pubkey: mintPda,
+      pubkey: tokenMint,
       isWritable: true,
       isSigner: false,
     },
@@ -113,8 +124,23 @@ export function createMintToInstruction(
       isSigner: true,
     },
     {
-      pubkey: programUsdcToken,
+      pubkey: reserveUsdcAccount,
       isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: earnedUsdcAccount,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: treasuryAccount,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: mint,
+      isWritable: false,
       isSigner: false,
     },
     {
@@ -126,7 +152,7 @@ export function createMintToInstruction(
 
   const ix = new web3.TransactionInstruction({
     programId: new web3.PublicKey(
-      '53pUyMnFNBEbpncA5sKZHjmf2bexs2Rk7s7d8no4vVd8'
+      'G28ceN5471mPMKhSThZu4tvzK6Skbxrr8qy4abskVsYJ'
     ),
     keys,
     data,

@@ -33,7 +33,7 @@ import * as anchor from '@project-serum/anchor'
 import { Program, Provider, web3 } from '@project-serum/anchor'
 
 
-import { createMintTokenInstruction } from '../../src/generated/instructions/mintToken'
+import { createRedeemOneGenericTokenInstruction } from '../../src/generated/instructions/redeemOneGenericToken'
 import { publicKey } from '@project-serum/anchor/dist/cjs/utils'
 
 export type MakeTransactionInputData = {
@@ -129,10 +129,15 @@ async function post(
       '4oGYQNAri38XrH1Ky7chVUPkPDHnKoqfFKHCwhaVYjjQ'
     )
     const mint = new PublicKey('BymSFLPtyXgKhoYmgXZ9dr2Fg1gocWJgew3Xcg4yAey1')
-    
     const reserve = new PublicKey(
       'EmHkcXafX4yPkLPtrb7iiQbYYBZSaGDkWxvmpzkAe1C7'
     )
+    
+    const testMerchant = new PublicKey(
+      '88DUNYveyr8QBZrTTBu569q4Zh5Rb5GwjhLsfTvW2bB3'
+    )
+    const mint2 = new PublicKey('DbLE5b58KKqTvkPmUK8aGfbM2w9CQjYR2h6bxGUB1KQC')
+    const earned = new PublicKey('caQTKPaRJWqwDmMDEY28rNVMLBF7wAeQSwFHnhEvScn')
     // const mintInfo = await getMint(connection, mint)
 
     // const buyerTokenAddress = await getOrCreateAssociatedTokenAccount(
@@ -155,20 +160,25 @@ async function post(
       buyerPublicKey
     )
 
+    const buyerTokenAddress2 = await getAssociatedTokenAddress(
+        mint2,
+        buyerPublicKey
+    )
+
     const createAccountInstruction = createAssociatedTokenAccountInstruction(
       buyerPublicKey,
-      buyerTokenAddress,
+      buyerTokenAddress2,
       buyerPublicKey,
-      mint,
+      mint2,
       TOKEN_PROGRAM_ID,
       ASSOCIATED_TOKEN_PROGRAM_ID
     )
-
+    
     let buyer: Account
     try {
       buyer = await getAccount(
         connection,
-        buyerTokenAddress,
+        buyerTokenAddress2,
         'confirmed',
         TOKEN_PROGRAM_ID
       )
@@ -190,15 +200,18 @@ async function post(
       programId
     )
 
-    const transferInstruction = createMintTokenInstruction(
+    const transferInstruction = createRedeemOneGenericTokenInstruction(
       {
-        tokenData: diamMerchant,
-        tokenMint: mint,
-        reserveUsdcAccount: reserve,
-        treasuryAccount: treasuryPDA,
-        userToken: buyerTokenAddress,
-        userUsdcToken: buyerUsdcAddress,
+        genericTokenData: diamMerchant,
+        tokenData: testMerchant,
+        genericTokenMint: mint,
+        tokenMint: mint2,
+        userToken: buyerTokenAddress2,
+        userGenericToken: buyerTokenAddress,
         user: buyerPublicKey,
+        genericReserveUsdcAccount: reserve,
+        earnedUsdcAccount: earned,
+        treasuryAccount: treasuryPDA,
         mint: usdcAddress,
       },
       { amount: amount.toNumber() * 10 ** usdcMint.decimals }

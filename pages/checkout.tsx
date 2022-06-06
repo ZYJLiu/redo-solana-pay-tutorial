@@ -1,7 +1,7 @@
-import { findReference, FindReferenceError } from '@solana/pay'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { Keypair, Transaction } from '@solana/web3.js'
+import { findReference, FindReferenceError } from '@solana/pay'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import BackLink from '../components/BackLink'

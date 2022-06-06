@@ -25,8 +25,11 @@ export default function Checkout() {
 
   const amount = useMemo(() => calculatePrice(router.query), [router.query])
 
+  // Unique address that we can listen for payments to
+  const reference = useMemo(() => Keypair.generate().publicKey, [])
+
   // Read the URL query (which includes our chosen products)
-  const searchParams = new URLSearchParams()
+  const searchParams = new URLSearchParams({ reference: reference.toString() })
   for (const [key, value] of Object.entries(router.query)) {
     if (value) {
       if (Array.isArray(value)) {
@@ -39,26 +42,10 @@ export default function Checkout() {
     }
   }
 
-  // Generate the unique reference which will be used for this transaction
-  const reference = useMemo(() => Keypair.generate().publicKey, [])
-
-  // Add it to the params we'll pass to the API
-  searchParams.append('reference', reference.toString())
-
   // Get a connection to Solana devnet
   const network = WalletAdapterNetwork.Devnet
   const endpoint = clusterApiUrl(network)
   const connection = new Connection(endpoint)
-
-  // Solana Pay transfer params
-  const urlParams: TransferRequestURLFields = {
-    recipient: shopAddress,
-    splToken: usdcAddress,
-    amount,
-    reference,
-    label: 'Cookies Inc',
-    message: 'Thanks for your order! 🍪',
-  }
 
   // Show the QR code
   useEffect(() => {
@@ -66,7 +53,7 @@ export default function Checkout() {
     const { location } = window
     const apiUrl = `${location.protocol}//${
       location.host
-    }/api/makeTransaction?${searchParams.toString()}`
+    }/api/makeTokenTransaction?${searchParams.toString()}`
     const urlParams: TransactionRequestURLFields = {
       link: new URL(apiUrl),
       label: 'Cookies Inc',
@@ -100,7 +87,7 @@ export default function Checkout() {
           },
           { commitment: 'confirmed' }
         )
-        router.push('/shop/confirmed')
+        router.push('/token/confirmed')
       } catch (e) {
         if (e instanceof FindReferenceError) {
           // No transaction found yet, ignore this error
@@ -121,7 +108,7 @@ export default function Checkout() {
 
   return (
     <div className="flex flex-col items-center gap-8">
-      <BackLink href="/shop">Cancel</BackLink>
+      <BackLink href="/token">Cancel</BackLink>
 
       <PageHeading>Checkout ${amount.toString()}</PageHeading>
 
